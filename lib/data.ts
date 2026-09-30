@@ -38,7 +38,7 @@ export const OPENING_MESSAGE = 'Abrimos às Segundas Feiras';
 
 export const PROMO = {
   title: 'Promoção',
-  price: 44.0,
+  price: 43.0,
   deliveryNote: 'Consultar taxa de entrega',
   flavors: [
     'Calabresa',
