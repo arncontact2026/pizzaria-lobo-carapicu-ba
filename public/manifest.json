@@ -1,0 +1,25 @@
+{
+  "name": "Pizzaria Lobo - Cardápio Digital",
+  "short_name": "Pizzaria Lobo",
+  "description": "Pizzaria Lobo - Deus é Fiel. Pizzas artesanais no forno a lenha. Faça seu pedido online!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#B43C1E",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "shopping"]
+}

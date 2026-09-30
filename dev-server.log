@@ -1,0 +1,154 @@
+
+> nextjs@0.1.0 dev
+> next dev
+
+  ▲ Next.js 13.5.11
+  - Local:        http://localhost:3000
+
+ ✓ Ready in 6.4s
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ○ Compiling /page ...
+ ✓ Compiled /page in 6.2s (1403 modules)
+ ✓ Compiled in 998ms (715 modules)
+ ✓ Compiled in 1354ms (1403 modules)
+ ⨯ ./components/menu/product-customization.tsx
+Error: 
+  [31mx[0m Unexpected token `motion`. Expected jsx identifier
+    ,-[[36;1;4mE:\Pizzaria Clientes\Pizzaria Lobo\components\menu\product-customization.tsx[0m:60:1]
+ [2m60[0m |   };
+ [2m61[0m | 
+ [2m62[0m |   return (
+ [2m63[0m |     <motion.div
+    : [31;1m     ^^^^^^[0m
+ [2m64[0m |       initial={{ opacity: 0 }}
+ [2m65[0m |       animate={{ opacity: 1 }}
+ [2m66[0m |       exit={{ opacity: 0 }}
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/menu/product-customization.tsx
+./components/menu/menu-section.tsx
+./app/page.tsx
+ ✓ Compiled in 1631ms (1403 modules)
+ ✓ Compiled in 933ms (1403 modules)
+ ✓ Compiled in 498ms (1403 modules)
+ ✓ Compiled in 498ms (1403 modules)
+ ✓ Compiled in 2.1s (1403 modules)
+ ✓ Compiled in 858ms (1403 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 647ms (1403 modules)
+ ✓ Compiled in 521ms (1403 modules)
+ ✓ Compiled in 380ms (1403 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 497ms (1403 modules)
+ ✓ Compiled in 826ms (1403 modules)
+ ✓ Compiled in 520ms (1403 modules)
+ ⨯ ./components/cart/cart-drawer.tsx
+Error: 
+  [31mx[0m Unexpected token `AnimatePresence`. Expected jsx identifier
+    ,-[[36;1;4mE:\Pizzaria Clientes\Pizzaria Lobo\components\cart\cart-drawer.tsx[0m:52:1]
+ [2m52[0m |   }, [isCartOpen]);
+ [2m53[0m | 
+ [2m54[0m |   return (
+ [2m55[0m |     <AnimatePresence>
+    : [31;1m     ^^^^^^^^^^^^^^^[0m
+ [2m56[0m |       {isCartOpen && (
+ [2m57[0m |         <motion.div
+ [2m58[0m |           initial={{ opacity: 0 }}
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/cart/cart-drawer.tsx
+./app/page.tsx
+ ⨯ ./components/cart/cart-drawer.tsx
+Error: 
+  [31mx[0m Unexpected token `AnimatePresence`. Expected jsx identifier
+    ,-[[36;1;4mE:\Pizzaria Clientes\Pizzaria Lobo\components\cart\cart-drawer.tsx[0m:52:1]
+ [2m52[0m |   }, [isCartOpen]);
+ [2m53[0m | 
+ [2m54[0m |   return (
+ [2m55[0m |     <AnimatePresence>
+    : [31;1m     ^^^^^^^^^^^^^^^[0m
+ [2m56[0m |       {isCartOpen && (
+ [2m57[0m |         <motion.div
+ [2m58[0m |           initial={{ opacity: 0 }}
+    `----
+
+Caused by:
+    Syntax Error
+
+Import trace for requested module:
+./components/cart/cart-drawer.tsx
+./app/page.tsx
+ ✓ Compiled in 471ms (1403 modules)
+ ✓ Compiled in 543ms (1403 modules)
+ ✓ Compiled in 1116ms (1389 modules)
+ ✓ Compiled in 636ms (715 modules)
+ ✓ Compiled in 338ms (715 modules)
+ ✓ Compiled in 237ms (715 modules)
+ ✓ Compiled in 323ms (715 modules)
+ ✓ Compiled in 1344ms (1403 modules)
+ ✓ Compiled in 496ms (1405 modules)
+ ✓ Compiled in 1220ms (1508 modules)
+ ✓ Compiled in 475ms (1508 modules)
+ ✓ Compiled in 459ms (1494 modules)
+ ✓ Compiled in 277ms (1494 modules)
+ ✓ Compiled in 538ms (1508 modules)
+ ✓ Compiled in 409ms (1508 modules)
+ ✓ Compiled in 1036ms (1508 modules)
+ ✓ Compiled in 717ms (1508 modules)
+ ✓ Compiled in 465ms (1508 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 992ms (1504 modules)
+ ✓ Compiled in 633ms (1504 modules)
+ ✓ Compiled in 518ms (1504 modules)
+ ✓ Compiled in 1029ms (1504 modules)
+ ✓ Compiled in 290ms (1490 modules)
+ ✓ Compiled in 1248ms (1504 modules)
+ ✓ Compiled in 453ms (1504 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 523ms (1504 modules)
+ ✓ Compiled in 507ms (1490 modules)
+ ✓ Compiled in 297ms (1490 modules)
+ ✓ Compiled in 338ms (1490 modules)
+ ✓ Compiled in 1148ms (1504 modules)
+ ✓ Compiled in 725ms (1504 modules)
+ ✓ Compiled in 466ms (1504 modules)
+ ✓ Compiled /not-found in 1513ms (1509 modules)
+ ✓ Compiled in 1191ms (1509 modules)
+ ✓ Compiled in 674ms (1509 modules)
+ ✓ Compiled in 753ms (1504 modules)
+ ✓ Compiled in 318ms (1490 modules)
+ ✓ Compiled in 1174ms (1504 modules)
+ ✓ Compiled in 688ms (1504 modules)
+ ✓ Compiled in 392ms (1504 modules)
+ ✓ Compiled /not-found in 879ms (1509 modules)
+ ✓ Compiled in 864ms (1504 modules)
+<w> [webpack.cache.PackFileCacheStrategy] Restoring pack from E:\Pizzaria Clientes\Pizzaria Lobo\.next\cache\webpack\client-development.pack.gz failed: TypeError: Cannot read properties of undefined (reading 'hasStartTime')
+ ✓ Compiled in 1088ms (1490 modules)
+ ✓ Compiled in 281ms (1490 modules)
+ ✓ Compiled in 548ms (1504 modules)
+ ✓ Compiled in 404ms (1506 modules)
+ ✓ Compiled in 416ms (1508 modules)
+ ✓ Compiled in 595ms (1508 modules)
+ ✓ Compiled in 465ms (1508 modules)
+ ✓ Compiled in 327ms (1508 modules)
+ ✓ Compiled /not-found in 1678ms (1499 modules)
+ ⚠ Fast Refresh had to perform a full reload. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+ ✓ Compiled in 523ms (1513 modules)
+ ✓ Compiled in 779ms (1508 modules)
+ ✓ Compiled in 483ms (1508 modules)
+ ✓ Compiled in 375ms (1494 modules)
+ ✓ Compiled in 286ms (1494 modules)
+ ✓ Compiled in 242ms (1494 modules)
+ ✓ Compiled in 442ms (1508 modules)
+ ✓ Compiled in 371ms (1508 modules)
+ ✓ Compiled in 1149ms (1508 modules)

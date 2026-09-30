@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 20% 97%;
+    --foreground: 20 14% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 10%;
+    --primary: 10 72% 44%;
+    --primary-foreground: 40 20% 97%;
+    --secondary: 40 30% 93%;
+    --secondary-foreground: 20 14% 10%;
+    --muted: 40 20% 93%;
+    --muted-foreground: 20 8% 46%;
+    --accent: 10 72% 44%;
+    --accent-foreground: 40 20% 97%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 40 20% 88%;
+    --input: 40 20% 88%;
+    --ring: 10 72% 44%;
+    --radius: 0.75rem;
+    --chart-1: 10 72% 44%;
+    --chart-2: 40 60% 50%;
+    --chart-3: 20 50% 40%;
+    --chart-4: 0 70% 50%;
+    --chart-5: 30 80% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(180, 60, 30, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(180, 60, 30, 0.6); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Improve mobile interactions */
+button, a, [role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: hsl(var(--primary) / 0.2);
+}
+
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Prevent zoom on input focus */
+input, textarea, select {
+  font-size: 16px !important;
+}
+
+/* Make scroll containers obvious and smooth on mobile */
+@media (hover: none) and (pointer: coarse) {
+  *::-webkit-scrollbar {
+    -webkit-appearance: none;
+  }
+  *::-webkit-scrollbar:horizontal {
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: hsl(var(--primary));
+  }
+  *::-webkit-scrollbar-track {
+    background-color: hsl(var(--secondary));
+    border-radius: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-float,
+  .animate-pulse-glow {
+    animation: none;
+  }
+}
+
+@keyframes hero-progress {
+  from { width: 0%; }
+  to { width: 100%; }
+}
+
+.hero-progress-fill {
+  animation-name: hero-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
