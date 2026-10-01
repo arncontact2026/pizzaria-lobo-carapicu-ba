@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import Image from 'next/image';
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { PIZZERIA_NAME } from '@/lib/data';
 import { encodeImageSrc } from '@/lib/format';
 
@@ -32,6 +32,7 @@ export function HeroSection() {
   const [direction, setDirection] = useState(1);
   const [paused, setPaused] = useState(false);
   const reduceMotion = useReducedMotion();
+  const touchStartX = useRef<number | null>(null);
 
   const goToSlide = useCallback(
     (index: number) => {
@@ -51,6 +52,19 @@ export function HeroSection() {
     setCurrentSlide((prev) => (prev - 1 + BANNER_IMAGES.length) % BANNER_IMAGES.length);
   }, []);
 
+  // Gesto de arrastar no celular para trocar de foto.
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const delta = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(delta) < 40) return;
+    if (delta < 0) nextSlide();
+    else prevSlide();
+  };
+
   // Avanço automático simples: um timer por slide, sem re-render a cada 50ms.
   useEffect(() => {
     if (paused || reduceMotion) return;
@@ -65,9 +79,11 @@ export function HeroSection() {
   return (
     <section
       id="hero-banner"
-      className="relative min-h-[92svh] flex items-center justify-center overflow-hidden bg-neutral-950"
+      className="relative min-h-[68svh] flex items-center justify-center overflow-hidden bg-neutral-950"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       {/* Fundo com carrossel */}
       <div className="absolute inset-0" aria-hidden={false}>
@@ -95,26 +111,6 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/45 to-black/80" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30" />
       </div>
-
-      {/* Setas */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 group"
-        aria-label="Foto anterior"
-      >
-        <span className="block bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-2 md:p-3 transition-all duration-300 group-hover:bg-white/25 group-hover:border-white/40">
-          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 text-white/80 group-hover:text-white transition-colors" />
-        </span>
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 group"
-        aria-label="Próxima foto"
-      >
-        <span className="block bg-white/10 backdrop-blur-md border border-white/20 rounded-full p-2 md:p-3 transition-all duration-300 group-hover:bg-white/25 group-hover:border-white/40">
-          <ChevronRight className="w-5 h-5 md:w-6 md:h-6 text-white/80 group-hover:text-white transition-colors" />
-        </span>
-      </button>
 
       {/* Conteúdo */}
       <div className="relative z-10 text-center px-4 max-w-3xl mx-auto pt-20">
@@ -188,37 +184,38 @@ export function HeroSection() {
             Conhecer a casa
           </a>
         </motion.div>
+
+        {/* Indicadores do carrossel */}
+        <div className="flex items-center justify-center gap-2 mt-8">
+          {BANNER_IMAGES.map((banner, index) => (
+            <button
+              key={`indicator-${index}`}
+              onClick={() => goToSlide(index)}
+              className="group p-1"
+              aria-label={`Ir para a foto ${index + 1}: ${banner.subtitle}`}
+              aria-current={index === currentSlide}
+            >
+              <span
+                className={`block h-1.5 rounded-full transition-all duration-500 overflow-hidden relative ${
+                  index === currentSlide ? 'w-10 bg-white/30' : 'w-3 bg-white/30 group-hover:bg-white/50'
+                }`}
+              >
+                {index === currentSlide && !reduceMotion && !paused && (
+                  <span
+                    key={`progress-${currentSlide}`}
+                    className="absolute inset-y-0 left-0 bg-white rounded-full hero-progress-fill"
+                    style={{ animationDuration: `${SLIDE_DURATION}ms` }}
+                  />
+                )}
+                {index === currentSlide && (paused || reduceMotion) && (
+                  <span className="absolute inset-0 bg-white/70 rounded-full" />
+                )}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* Indicadores */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        {BANNER_IMAGES.map((banner, index) => (
-          <button
-            key={`indicator-${index}`}
-            onClick={() => goToSlide(index)}
-            className="group p-1"
-            aria-label={`Ir para a foto ${index + 1}: ${banner.subtitle}`}
-            aria-current={index === currentSlide}
-          >
-            <span
-              className={`block h-1.5 rounded-full transition-all duration-500 overflow-hidden relative ${
-                index === currentSlide ? 'w-10 bg-white/30' : 'w-3 bg-white/30 group-hover:bg-white/50'
-              }`}
-            >
-              {index === currentSlide && !reduceMotion && !paused && (
-                <span
-                  key={`progress-${currentSlide}`}
-                  className="absolute inset-y-0 left-0 bg-white rounded-full hero-progress-fill"
-                  style={{ animationDuration: `${SLIDE_DURATION}ms` }}
-                />
-              )}
-              {index === currentSlide && (paused || reduceMotion) && (
-                <span className="absolute inset-0 bg-white/70 rounded-full" />
-              )}
-            </span>
-          </button>
-        ))}
-      </div>
       {/* Scroll */}
       <motion.button
         type="button"

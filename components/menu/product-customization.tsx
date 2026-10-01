@@ -1,12 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
-import { motion } from 'framer-motion';
 import { X, Check } from 'lucide-react';
 import { Product, Size, Crust } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
 import { encodeImageSrc, formatBRL } from '@/lib/format';
+import { ModalShell } from '@/components/modal/modal-shell';
 
 interface Props {
   product: Product;
@@ -23,20 +23,6 @@ export function ProductCustomization({ product, onClose }: Props) {
   );
   const [observations, setObservations] = useState('');
 
-  // Fecha com ESC e trava o scroll do fundo enquanto o modal está aberto.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
-    };
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [onClose]);
-
   const getPrice = () => {
     let price = selectedSize ? selectedSize.price : product.price;
     if (selectedCrust) price += selectedCrust.price;
@@ -50,24 +36,7 @@ export function ProductCustomization({ product, onClose }: Props) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`Personalizar ${product.name}`}
-    >
-      <motion.div
-        initial={{ y: '100%' }}
-        animate={{ y: 0 }}
-        exit={{ y: '100%' }}
-        transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-        className="bg-card w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[90dvh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+    <ModalShell label={`Personalizar ${product.name}`} variant="sheet" onClose={onClose}>
         {/* Header Image */}
         <div className="relative aspect-[4/3] overflow-hidden rounded-t-2xl bg-secondary/30">
           <Image
@@ -185,7 +154,6 @@ export function ProductCustomization({ product, onClose }: Props) {
             Adicionar · {formatBRL(getPrice())}
           </button>
         </div>
-      </motion.div>
-    </motion.div>
+    </ModalShell>
   );
 }

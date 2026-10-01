@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { label: 'Cardápio', href: '#cardapio' },
   { label: 'Promoção', href: '#promocoes' },
   { label: 'Sobre', href: '#sobre' },
+  { label: 'Localização', href: '#localizacao' },
   { label: 'Avaliações', href: '#avaliacoes' },
 ];
 

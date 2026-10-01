@@ -11,6 +11,7 @@ import {
   PromoSection,
   AboutSection,
   HoursSection,
+  LocationSection,
   ReviewsSection,
 } from '@/components/sections/info-sections';
 import { FloatingCartButton } from '@/components/cart/floating-cart-btn';
@@ -38,6 +39,7 @@ export default function Home() {
         <PromoSection />
         <AboutSection />
         <HoursSection />
+        <LocationSection />
         <ReviewsSection />
       </main>
       <Footer />

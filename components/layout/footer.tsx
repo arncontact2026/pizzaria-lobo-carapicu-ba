@@ -1,15 +1,18 @@
 'use client';
 
-import { Phone, Clock, Instagram, Facebook, MessageCircle } from 'lucide-react';
+import { Phone, Clock, Instagram, Facebook, MessageCircle, MapPin } from 'lucide-react';
 import {
   PIZZERIA_NAME,
   PIZZERIA_SLOGAN,
   PIZZERIA_PHONE,
   PIZZERIA_WHATSAPP,
   PIZZERIA_INSTAGRAM,
+  PIZZERIA_ADDRESS_FULL,
+  PIZZERIA_MAPS_LINK_URL,
   WHATSAPP_NUMBER,
   PAYMENT_METHODS,
 } from '@/lib/data';
+import { PaymentBrandBadges } from '@/components/sections/payment-brands';
 
 export function Footer() {
   const instagramUrl = `https://instagram.com/${PIZZERIA_INSTAGRAM.replace('@', '')}`;
@@ -37,7 +40,7 @@ export function Footer() {
                 <Instagram className="w-5 h-5" aria-hidden />
               </a>
               <a
-                href="https://facebook.com/"
+                href="https://www.facebook.com/pizzaria.lobo/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-background/10 flex items-center justify-center hover:bg-background/20 transition-colors"
@@ -82,18 +85,26 @@ export function Footer() {
                 <Instagram className="w-4 h-4 flex-shrink-0" aria-hidden />
                 <span>{PIZZERIA_INSTAGRAM}</span>
               </p>
+              <p className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" aria-hidden />
+                <a
+                  href={PIZZERIA_MAPS_LINK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  {PIZZERIA_ADDRESS_FULL}
+                </a>
+              </p>
             </address>
             <div className="mt-4">
               <h5 className="text-xs font-semibold uppercase tracking-wide text-background/50 mb-2">
                 Pagamento
               </h5>
-              <div className="flex flex-wrap gap-1.5">
-                {PAYMENT_METHODS.map((method) => (
-                  <span key={method} className="text-xs bg-background/10 px-2 py-1 rounded-md">
-                    {method}
-                  </span>
-                ))}
-              </div>
+              <PaymentBrandBadges compact />
+              <p className="text-[11px] text-background/50 mt-2">
+                E também: {PAYMENT_METHODS.filter((m) => !['Visa', 'Mastercard', 'Pix'].includes(m)).join(' · ')}
+              </p>
             </div>
           </div>
 

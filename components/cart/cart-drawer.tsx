@@ -1,13 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus, ShoppingBag, ArrowRight, Trash2, CupSoda } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { getItemPrice } from '@/lib/cart-context';
 import { DELIVERY_FEE_TEXT } from '@/lib/data';
 import { encodeImageSrc, formatBRL } from '@/lib/format';
+import { ModalShell } from '@/components/modal/modal-shell';
 
 export function CartDrawer() {
   const {
@@ -22,20 +23,7 @@ export function CartDrawer() {
     setCheckoutOpen,
   } = useCart();
   const [suggestDismissed, setSuggestDismissed] = useState(false);
-
-  useEffect(() => {
-    if (!isCartOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setCartOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [isCartOpen, setCartOpen]);
+  const closeCart = useCallback(() => setCartOpen(false), [setCartOpen]);
 
   const subtotal = getSubtotal();
   const total = getTotal();
@@ -54,24 +42,7 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-          onClick={() => setCartOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Sacola de pedidos"
-        >
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-card shadow-2xl flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <ModalShell label="Sacola de pedidos" variant="drawer" onClose={closeCart}>
             {/* Header */}
             <div className="flex items-center justify-between p-4 sm:p-5 border-b">
               <div className="flex items-center gap-2">
@@ -263,8 +234,7 @@ export function CartDrawer() {
                 </button>
               </div>
             )}
-          </motion.div>
-        </motion.div>
+        </ModalShell>
       )}
     </AnimatePresence>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, QrCode, CreditCard, Banknote, Check, MapPin, User, MessageCircle, Loader2 } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
@@ -10,6 +10,7 @@ import { fetchAddressByCep } from '@/lib/cep';
 import { newOrderRef } from '@/lib/pix';
 import { PixPayment } from './pix-payment';
 import { ReceiptPreview } from './receipt-preview';
+import { ModalShell } from '@/components/modal/modal-shell';
 import { PaymentMethod } from '@/lib/types';
 
 const PAYMENT_LABELS: Record<PaymentMethod, string> = {
@@ -57,19 +58,18 @@ export function CheckoutModal() {
     }
   }, [isCheckoutOpen]);
 
-  useEffect(() => {
-    if (!isCheckoutOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !submitted) setCheckoutOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
-    };
-  }, [isCheckoutOpen, submitted, setCheckoutOpen]);
+  const handleClose = useCallback(() => {
+    const wasSubmitted = submitted;
+    setSubmitted(false);
+    setCheckoutOpen(false);
+    if (wasSubmitted) {
+      // Pedido concluído: volta ao topo para recomeçar.
+      window.setTimeout(() => {
+        document.body.style.overflow = '';
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }, 120);
+    }
+  }, [submitted, setCheckoutOpen]);
 
   const subtotal = getSubtotal();
   const total = getTotal();
@@ -135,39 +135,10 @@ export function CheckoutModal() {
     }
   };
 
-  const handleClose = () => {
-    setSubmitted(false);
-    setCheckoutOpen(false);
-    // Pedido concluído: volta ao topo para recomeçar.
-    window.setTimeout(() => {
-      document.body.style.overflow = '';
-      window.scrollTo({ top: 0, behavior: 'auto' });
-    }, 120);
-  };
-
   return (
     <AnimatePresence>
       {isCheckoutOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center"
-          onClick={() => {
-            if (!submitted) handleClose();
-          }}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Finalizar pedido"
-        >
-          <motion.div
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="bg-card w-full sm:max-w-lg sm:rounded-2xl rounded-t-2xl max-h-[90dvh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <ModalShell label="Finalizar pedido" variant="sheet" onClose={handleClose}>
             {submitted ? (
               <div className="p-8 text-center">
                 <motion.div
@@ -479,8 +450,7 @@ export function CheckoutModal() {
                 </div>
               </>
             )}
-          </motion.div>
-        </motion.div>
+        </ModalShell>
       )}
     </AnimatePresence>
   );

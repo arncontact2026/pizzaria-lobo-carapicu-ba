@@ -1,41 +1,12 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import {
-  Search,
-  Pizza,
-  Flame,
-  Beef,
-  Drumstick,
-  Leaf,
-  Sandwich,
-  Fish,
-  Star,
-  CakeSlice,
-  CupSoda,
-  Cookie,
-  LayoutGrid,
-} from 'lucide-react';
+import { Search } from 'lucide-react';
 import { PRODUCTS, CATEGORIES } from '@/lib/data';
 import { Product, CategorySlug } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { ProductCustomization } from './product-customization';
-
-const CATEGORY_ICONS: Record<string, typeof Pizza> = {
-  pizza: Pizza,
-  flame: Flame,
-  beef: Beef,
-  drumstick: Drumstick,
-  leaf: Leaf,
-  sandwich: Sandwich,
-  fish: Fish,
-  star: Star,
-  cake: CakeSlice,
-  fries: Cookie,
-  pie: Cookie,
-  cup: CupSoda,
-};
 
 const PAGE_SIZE = 12;
 
@@ -56,6 +27,7 @@ export function MenuSection() {
   const reduceMotion = useReducedMotion();
 
   const debouncedSearch = useDebounced(search.trim().toLowerCase());
+  const closeProduct = useCallback(() => setSelectedProduct(null), []);
 
   const filteredProducts = useMemo(() => {
     if (debouncedSearch) {
@@ -156,7 +128,6 @@ export function MenuSection() {
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {CATEGORIES.map((cat) => {
-            const Icon = CATEGORY_ICONS[cat.icon] ?? LayoutGrid;
             const active = activeCategory === cat.slug;
             return (
               <button
@@ -164,13 +135,12 @@ export function MenuSection() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => setActiveCategory(cat.slug)}
-                className={`flex-shrink-0 inline-flex items-center gap-1.5 px-4 py-2 rounded-full font-medium text-sm transition-all border ${
+                className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all border ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary shadow-md'
                     : 'bg-card text-foreground/80 border-border hover:border-primary/40'
                 }`}
               >
-                <Icon className="w-4 h-4" aria-hidden />
                 {cat.name}
               </button>
             );
@@ -242,7 +212,7 @@ export function MenuSection() {
           <ProductCustomization
             key={selectedProduct.id}
             product={selectedProduct}
-            onClose={() => setSelectedProduct(null)}
+            onClose={closeProduct}
           />
         )}
       </AnimatePresence>

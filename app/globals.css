@@ -129,3 +129,10 @@ input, textarea, select {
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
+
+/* Adia a renderização das seções abaixo da dobra até chegarem perto
+   da viewport — pintura inicial mais rápida sem mudar o visual. */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 700px;
+}
