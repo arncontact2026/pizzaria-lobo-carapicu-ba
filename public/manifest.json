@@ -4,7 +4,7 @@
   "description": "Pizzaria Lobo - Deus é Fiel. Pizzas artesanais no forno a lenha. Faça seu pedido online!",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF7F2",
+  "background_color": "#1F130E",
   "theme_color": "#B43C1E",
   "orientation": "portrait",
   "icons": [
