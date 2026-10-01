@@ -18,13 +18,20 @@ import { FloatingCartButton } from '@/components/cart/floating-cart-btn';
 import { ServiceWorkerRegistration } from '@/components/pwa/register';
 
 // Modais pesados carregam só quando abertos — alivia o primeiro carregamento.
+function ModalFallback() {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center" aria-hidden>
+      <div className="w-10 h-10 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+    </div>
+  );
+}
 const CartDrawer = dynamic(
   () => import('@/components/cart/cart-drawer').then((m) => m.CartDrawer),
-  { ssr: false },
+  { ssr: false, loading: ModalFallback },
 );
 const CheckoutModal = dynamic(
   () => import('@/components/checkout/checkout-modal').then((m) => m.CheckoutModal),
-  { ssr: false },
+  { ssr: false, loading: ModalFallback },
 );
 
 export default function Home() {

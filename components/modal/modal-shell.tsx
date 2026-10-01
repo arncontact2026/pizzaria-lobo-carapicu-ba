@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { lockScroll, unlockScroll } from '@/lib/scroll-lock';
 
 interface ModalShellProps {
   label: string;
@@ -24,11 +25,10 @@ export function ModalShell({ label, onClose, variant = 'sheet', children }: Moda
       if (e.key === 'Escape') onClose();
     };
     document.addEventListener('keydown', onKey);
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
+    lockScroll();
     return () => {
       document.removeEventListener('keydown', onKey);
-      document.body.style.overflow = prev;
+      unlockScroll();
     };
   }, [onClose]);
 

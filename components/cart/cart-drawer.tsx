@@ -8,6 +8,7 @@ import { useCart } from '@/lib/cart-context';
 import { getItemPrice } from '@/lib/cart-context';
 import { DELIVERY_FEE_TEXT } from '@/lib/data';
 import { encodeImageSrc, formatBRL } from '@/lib/format';
+import { forceUnlockScroll } from '@/lib/scroll-lock';
 import { ModalShell } from '@/components/modal/modal-shell';
 
 export function CartDrawer() {
@@ -76,7 +77,6 @@ export function CartDrawer() {
                     onClick={() => {
                       setCartOpen(false);
                       window.setTimeout(() => {
-                        document.body.style.overflow = '';
                         document.getElementById('cardapio')?.scrollIntoView({ behavior: 'auto' });
                       }, 120);
                     }}
@@ -172,16 +172,17 @@ export function CartDrawer() {
                 <CupSoda className="w-5 h-5 text-primary flex-shrink-0" aria-hidden />
                 <button
                   type="button"
-                  onClick={() => {
-                    setCartOpen(false);
-                    // Fecha a sacola primeiro (libera o scroll do body) e só
-                    // depois navega: evita rolagem travada no celular.
-                    window.setTimeout(() => {
-                      window.dispatchEvent(
-                        new CustomEvent('lobo:show-category', { detail: 'bebidas' }),
-                      );
-                    }, 120);
-                  }}
+                    onClick={() => {
+                      setCartOpen(false);
+                      // Fecha a sacola primeiro (animação de saída + libera o
+                      // scroll) e só depois navega: evita tela presa no celular.
+                      window.setTimeout(() => {
+                        forceUnlockScroll();
+                        window.dispatchEvent(
+                          new CustomEvent('lobo:show-category', { detail: 'bebidas' }),
+                        );
+                      }, 350);
+                    }}
                   className="flex-1 text-left"
                 >
                   <span className="block text-sm font-bold leading-snug">

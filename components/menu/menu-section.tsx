@@ -7,6 +7,7 @@ import { PRODUCTS, CATEGORIES } from '@/lib/data';
 import { Product, CategorySlug } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { ProductCustomization } from './product-customization';
+import { forceUnlockScroll } from '@/lib/scroll-lock';
 
 const PAGE_SIZE = 12;
 
@@ -50,13 +51,15 @@ export function MenuSection() {
     const handler = (e: Event) => {
       const slug = (e as CustomEvent<CategorySlug>).detail;
       if (!slug || !CATEGORIES.some((c) => c.slug === slug)) return;
-      // Segurança: nenhum modal pode ter deixado o scroll do body travado.
-      document.body.style.overflow = '';
+      // Segurança: nenhum modal pode ter deixado o scroll travado.
+      forceUnlockScroll();
       setActiveCategory(slug);
       setSearch('');
-      // Rolagem instantânea: o 'smooth' compete com a troca da grade
-      // e deixa a página presa no meio do caminho em alguns celulares.
-      document.getElementById('cardapio')?.scrollIntoView({ behavior: 'auto' });
+      // Rola depois da troca da grade, de uma vez, sem animação competindo.
+      requestAnimationFrame(() => {
+        forceUnlockScroll();
+        document.getElementById('cardapio')?.scrollIntoView({ behavior: 'auto', block: 'start' });
+      });
     };
     window.addEventListener('lobo:show-category', handler);
     return () => window.removeEventListener('lobo:show-category', handler);
@@ -154,26 +157,23 @@ export function MenuSection() {
       </p>
 
       {/* Grade de produtos */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeCategory + debouncedSearch}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
-        >
-          {visibleProducts.map((product, i) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              onSelect={setSelectedProduct}
-              index={i}
-              priority={i < 2}
-            />
-          ))}
-        </motion.div>
-      </AnimatePresence>
+      <motion.div
+        key={activeCategory + debouncedSearch}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4"
+      >
+        {visibleProducts.map((product, i) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            onSelect={setSelectedProduct}
+            index={i}
+            priority={i < 2}
+          />
+        ))}
+      </motion.div>
 
       {filteredProducts.length === 0 && (
         <div className="text-center py-12 text-muted-foreground">

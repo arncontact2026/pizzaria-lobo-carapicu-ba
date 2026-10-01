@@ -7,6 +7,7 @@ import { useCart } from '@/lib/cart-context';
 import { generateWhatsAppMessage, openWhatsApp } from '@/lib/whatsapp';
 import { formatBRL, isValidBRPhone, parseBRLInput, formatCepInput, cepDigits } from '@/lib/format';
 import { fetchAddressByCep } from '@/lib/cep';
+import { forceUnlockScroll } from '@/lib/scroll-lock';
 import { newOrderRef } from '@/lib/pix';
 import { PixPayment } from './pix-payment';
 import { ReceiptPreview } from './receipt-preview';
@@ -65,7 +66,7 @@ export function CheckoutModal() {
     if (wasSubmitted) {
       // Pedido concluído: volta ao topo para recomeçar.
       window.setTimeout(() => {
-        document.body.style.overflow = '';
+        forceUnlockScroll();
         window.scrollTo({ top: 0, behavior: 'auto' });
       }, 120);
     }
