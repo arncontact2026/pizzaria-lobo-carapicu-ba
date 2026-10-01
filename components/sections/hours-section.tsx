@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Clock, Truck, CreditCard } from 'lucide-react';
 import { HOURS, DELIVERY_FEE_TEXT, PAYMENT_METHODS } from '@/lib/data';
 import { PaymentBrandBadges } from './payment-brands';
@@ -16,8 +17,13 @@ export function HoursSection() {
     { day: 'Domingo', hours: HOURS.sun },
   ];
 
-  const todayIndex = new Date().getDay();
-  const adjustedIndex = todayIndex === 0 ? 6 : todayIndex - 1;
+  const [todayIndex, setTodayIndex] = useState<number | null>(null);
+  const adjustedIndex = todayIndex === null ? -1 : todayIndex === 0 ? 6 : todayIndex - 1;
+
+  // Dia da semana só no cliente: evita divergência com o HTML gerado no servidor.
+  useEffect(() => {
+    setTodayIndex(new Date().getDay());
+  }, []);
 
   return (
     <section className="below-fold py-12 px-4 max-w-5xl mx-auto" aria-label="Horários e entrega">

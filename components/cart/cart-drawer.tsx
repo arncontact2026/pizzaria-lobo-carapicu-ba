@@ -95,8 +95,8 @@ export function CartDrawer() {
                         key={item.id}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
-                        transition={{ duration: 0.18 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.15 }}
                         className="flex gap-3 p-3 bg-secondary/50 rounded-xl mb-3"
                       >
                       <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-background flex-shrink-0">
