@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { Product } from '@/lib/types';
 import { encodeImageSrc, formatBRL } from '@/lib/format';
+import { playClick } from '@/lib/sound';
 import { useState } from 'react';
 
 interface ProductCardProps {
@@ -62,7 +63,7 @@ export function ProductCard({ product, onSelect, index, priority = false }: Prod
           </p>
         </div>
         <button
-          onClick={() => onSelect(product)}
+          onClick={() => { playClick(); onSelect(product); }}
           aria-label={`Personalizar e adicionar ${product.name} ao pedido`}
           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] active:scale-[0.98] text-sm"
         >

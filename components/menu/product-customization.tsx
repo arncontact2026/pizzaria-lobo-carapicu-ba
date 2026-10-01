@@ -6,6 +6,7 @@ import { X, Check } from 'lucide-react';
 import { Product, Size, Crust } from '@/lib/types';
 import { useCart } from '@/lib/cart-context';
 import { encodeImageSrc, formatBRL } from '@/lib/format';
+import { playAdd } from '@/lib/sound';
 import { ModalShell } from '@/components/modal/modal-shell';
 
 interface Props {
@@ -31,6 +32,7 @@ export function ProductCustomization({ product, onClose }: Props) {
 
   const handleAdd = () => {
     addItem(product, selectedSize, selectedCrust, [], observations);
+    playAdd();
     onClose();
     setCartOpen(true);
   };

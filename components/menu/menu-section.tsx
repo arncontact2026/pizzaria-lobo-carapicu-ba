@@ -8,6 +8,7 @@ import { Product, CategorySlug } from '@/lib/types';
 import { ProductCard } from './product-card';
 import { ProductCustomization } from './product-customization';
 import { forceUnlockScroll } from '@/lib/scroll-lock';
+import { playClick } from '@/lib/sound';
 
 const PAGE_SIZE = 12;
 
@@ -137,7 +138,7 @@ export function MenuSection() {
                 key={cat.slug}
                 role="tab"
                 aria-selected={active}
-                onClick={() => setActiveCategory(cat.slug)}
+                onClick={() => { playClick(); setActiveCategory(cat.slug); }}
                 className={`flex-shrink-0 px-4 py-2 rounded-full font-medium text-sm transition-all border ${
                   active
                     ? 'bg-primary text-primary-foreground border-primary shadow-md'

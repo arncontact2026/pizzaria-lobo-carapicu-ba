@@ -8,6 +8,7 @@ import { generateWhatsAppMessage, openWhatsApp } from '@/lib/whatsapp';
 import { formatBRL, isValidBRPhone, parseBRLInput, formatCepInput, cepDigits } from '@/lib/format';
 import { fetchAddressByCep } from '@/lib/cep';
 import { forceUnlockScroll } from '@/lib/scroll-lock';
+import { playAdd } from '@/lib/sound';
 import { newOrderRef } from '@/lib/pix';
 import { PixPayment } from './pix-payment';
 import { ReceiptPreview } from './receipt-preview';
@@ -127,6 +128,7 @@ export function CheckoutModal() {
     try {
       const message = generateWhatsAppMessage(items, checkout, subtotal, orderRef || undefined);
       openWhatsApp(message);
+      playAdd();
       // Pedido enviado: zera a sacola e os dados para o próximo pedido.
       clearCart();
       resetCheckout();

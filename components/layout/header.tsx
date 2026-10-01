@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingCart, Menu, X } from 'lucide-react';
+import { ShoppingCart, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { PIZZERIA_NAME } from '@/lib/data';
+import { isSoundEnabled, setSoundEnabled, playClick } from '@/lib/sound';
 import Image from 'next/image';
 
 const NAV_ITEMS = [
@@ -20,7 +21,19 @@ export function Header() {
   const { getItemCount, setCartOpen } = useCart();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [soundOn, setSoundOn] = useState(true);
   const count = getItemCount();
+
+  useEffect(() => {
+    setSoundOn(isSoundEnabled());
+  }, []);
+
+  const toggleSound = () => {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+    if (next) playClick();
+  };
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 50);
@@ -68,7 +81,22 @@ export function Header() {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            onClick={() => setCartOpen(true)}
+            onClick={toggleSound}
+            aria-label={soundOn ? 'Desativar sons' : 'Ativar sons'}
+            aria-pressed={soundOn}
+            className={`w-10 h-10 rounded-full hidden sm:flex items-center justify-center transition-colors ${
+              scrolled || menuOpen ? 'bg-secondary hover:bg-secondary/80' : 'bg-white/10 hover:bg-white/20'
+            }`}
+          >
+            {soundOn ? (
+              <Volume2 className={`w-5 h-5 ${scrolled || menuOpen ? 'text-foreground' : 'text-white'}`} aria-hidden />
+            ) : (
+              <VolumeX className={`w-5 h-5 ${scrolled || menuOpen ? 'text-foreground' : 'text-white'}`} aria-hidden />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={() => { playClick(); setCartOpen(true); }}
             aria-label={count > 0 ? `Abrir pedido com ${count} itens` : 'Abrir pedido'}
             className={`relative w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
               scrolled || menuOpen ? 'bg-secondary hover:bg-secondary/80' : 'bg-white/10 hover:bg-white/20'
@@ -124,6 +152,15 @@ export function Header() {
                   {item.label}
                 </a>
               ))}
+              <button
+                type="button"
+                onClick={toggleSound}
+                aria-pressed={soundOn}
+                className="w-full flex items-center gap-2 py-2.5 px-3 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
+              >
+                {soundOn ? <Volume2 className="w-4 h-4" aria-hidden /> : <VolumeX className="w-4 h-4" aria-hidden />}
+                Som {soundOn ? 'ligado' : 'desligado'}
+              </button>
             </nav>
           </motion.div>
         )}

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingCart } from 'lucide-react';
 import { useCart } from '@/lib/cart-context';
 import { formatBRL } from '@/lib/format';
+import { playClick } from '@/lib/sound';
 
 export function FloatingCartButton() {
   const { getItemCount, setCartOpen, getSubtotal } = useCart();
@@ -21,7 +22,7 @@ export function FloatingCartButton() {
         >
           <button
             type="button"
-            onClick={() => setCartOpen(true)}
+            onClick={() => { playClick(); setCartOpen(true); }}
             aria-label={`Ver sacola com ${count} itens, total ${formatBRL(subtotal)}`}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3.5 rounded-2xl flex items-center justify-between px-5 shadow-lg shadow-primary/25 transition-all active:scale-[0.98]"
           >
