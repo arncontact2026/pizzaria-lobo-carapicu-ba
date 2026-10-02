@@ -1,6 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
+import { useEffect } from 'react';
 import { CartProvider } from '@/lib/cart-context';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
@@ -35,6 +36,16 @@ const CheckoutModal = dynamic(
 );
 
 export default function Home() {
+  // Pré-aquece o áudio no primeiro toque em qualquer lugar da página,
+  // para nenhum botão pagar o custo de criá-lo.
+  useEffect(() => {
+    const warm = () => {
+      import('@/lib/sound').then((m) => m.warmAudio()).catch(() => undefined);
+    };
+    window.addEventListener('pointerdown', warm, { once: true, passive: true, capture: true });
+    return () => window.removeEventListener('pointerdown', warm, { capture: true });
+  }, []);
+
   return (
     <CartProvider>
       <ServiceWorkerRegistration />

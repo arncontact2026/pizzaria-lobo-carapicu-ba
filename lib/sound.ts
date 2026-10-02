@@ -40,6 +40,14 @@ function audio(): AudioContext | null {
   }
 }
 
+/**
+ * Pré-aquece o áudio no primeiro toque na tela (fora do caminho crítico).
+ * Assim, criar o AudioContext nunca trava o gesto de adicionar ao pedido.
+ */
+export function warmAudio(): void {
+  audio();
+}
+
 function tone(freq: number, startAt: number, duration: number, volume: number, type: OscillatorType = 'triangle') {
   const ac = audio();
   if (!ac) return;

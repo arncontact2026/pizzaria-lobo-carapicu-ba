@@ -31,10 +31,16 @@ export function ProductCustomization({ product, onClose }: Props) {
   };
 
   const handleAdd = () => {
-    addItem(product, selectedSize, selectedCrust, [], observations);
-    playAdd();
+    // Fecha o popup primeiro; adiciona e abre a sacola no próximo quadro.
+    // Evita duas animações de modal sobrepostas no mesmo gesto (travava
+    // em celular fraco justamente ao adicionar bebidas).
+    const selection = { product, size: selectedSize, crust: selectedCrust, obs: observations };
     onClose();
-    setCartOpen(true);
+    requestAnimationFrame(() => {
+      addItem(selection.product, selection.size, selection.crust, [], selection.obs);
+      playAdd();
+      setCartOpen(true);
+    });
   };
 
   return (
