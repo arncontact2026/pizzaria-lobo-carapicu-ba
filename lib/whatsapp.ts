@@ -9,7 +9,7 @@ const PAYMENT_LABELS: Record<CheckoutData['payment'], string> = {
   cash: 'Dinheiro',
 };
 
-const WIDTH = 40;
+const WIDTH = 30;
 const DIVIDER = '-'.repeat(WIDTH);
 
 /** Saudação conforme o horário: Bom Dia / Boa Tarde / Boa Noite. */
@@ -79,22 +79,22 @@ export function generateWhatsAppMessage(
 
   items.slice(0, 100).forEach((item) => {
     const unit = getItemPrice(item);
-    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 12)})` : '';
-    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 24)}${sizeSuffix}`, pricePad(unit * item.quantity)));
+    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 8)})` : '';
+    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 18)}${sizeSuffix}`, pricePad(unit * item.quantity)));
     if (item.crust && item.crust.price > 0) {
-      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 24)}`, pricePad(item.crust.price)));
+      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 18)}`, pricePad(item.crust.price)));
     }
     for (const extra of item.extras.slice(0, 10)) {
-      lines.push(row(`+ ${sanitizeLine(extra.name, 24)}`, pricePad(extra.price * item.quantity)));
+      lines.push(row(`+ ${sanitizeLine(extra.name, 18)}`, pricePad(extra.price * item.quantity)));
     }
     if (item.observations) {
-      lines.push(`Obs: ${sanitizeLine(item.observations, 34)}`);
+      lines.push(`Obs: ${sanitizeLine(item.observations, 24)}`);
     }
   });
 
   const safeSubtotal = Number.isFinite(subtotal) && subtotal >= 0 ? subtotal : 0;
 
-  lines.push(row('Taxa De Entrega', 'Consultar taxa'));
+  lines.push(row('Taxa De Entrega', 'A consultar'));
   lines.push(row('Total', pricePad(safeSubtotal)));
   lines.push(DIVIDER);
   lines.push(center(`Forma de Pagamento ${PAYMENT_LABELS[checkout.payment] ?? 'Pix'}`));
@@ -109,14 +109,14 @@ export function generateWhatsAppMessage(
   }
 
   lines.push(DIVIDER);
-  lines.push(`Cliente ${sanitizeLine(c.name, 31)}`);
-  lines.push(`Contato ${sanitizeLine(c.phone, 31)}`);
+  lines.push(`Cliente ${sanitizeLine(c.name, 21)}`);
+  lines.push(`Contato ${sanitizeLine(c.phone, 21)}`);
   lines.push('Endereço');
   const addressLine = [c.address, c.number ? `N${c.number}` : '', c.complement, c.neighborhood ? `Bairro ${c.neighborhood}` : '']
     .filter(Boolean)
     .join(' ');
   for (const part of wrap(sanitizeLine(addressLine, 200))) lines.push(part);
-  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 29)}`);
+  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 19)}`);
   lines.push(DIVIDER);
 
   // Bloco monoespaçado: no WhatsApp, só assim os valores alinham em coluna.
