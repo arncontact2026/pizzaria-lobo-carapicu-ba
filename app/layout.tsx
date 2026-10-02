@@ -143,10 +143,11 @@ export default function RootLayout({
         <style
           dangerouslySetInnerHTML={{
             __html: [
-              '#app-splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#1F130E url("/banner%20pizza%201.webp") center/cover no-repeat;transition:opacity .5s ease}',
+              '#app-splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#1F130E;transition:opacity .5s ease;overflow:hidden}',
+              '#app-splash .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}',
               '#app-splash::before{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.55),rgba(0,0,0,.35) 45%,rgba(0,0,0,.7))}',
               '#app-splash.done{opacity:0;pointer-events:none}',
-              '#app-splash img{position:relative;width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,.6))}',
+              '#app-splash img.logo{position:relative;width:96px;height:96px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,.6))}',
               '#app-splash p{position:relative;color:#fff;font-family:system-ui,sans-serif;font-weight:700;font-size:22px;letter-spacing:.02em;margin:0;text-shadow:0 2px 12px rgba(0,0,0,.7)}',
               '#app-splash small{position:relative;color:rgba(255,255,255,.65);font-family:system-ui,sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase}',
             ].join(''),
@@ -155,7 +156,8 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <div id="app-splash" aria-hidden>
-          <img src="/logo.png" alt="" />
+          <img className="bg" src="/banner%20pizza%201.webp" alt="" fetchPriority="high" />
+          <img className="logo" src="/logo.png" alt="" fetchPriority="high" />
           <p>Pizzaria Lobo</p>
           <small>Forno a lenha</small>
         </div>
