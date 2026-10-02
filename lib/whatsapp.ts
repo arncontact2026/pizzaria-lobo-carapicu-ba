@@ -1,124 +1,105 @@
 import { CartItem, CheckoutData } from './types';
-import { WHATSAPP_NUMBER, PIZZERIA_NAME, PIZZERIA_SLOGAN, DELIVERY_FEE_TEXT } from './data';
+import { WHATSAPP_NUMBER, DELIVERY_FEE_TEXT } from './data';
 import { getItemPrice } from './cart-context';
 import { formatBRL, parseBRLInput, sanitizeLine } from './format';
 
 const PAYMENT_LABELS: Record<CheckoutData['payment'], string> = {
-  pix: 'PIX',
-  card: 'CARTÃO',
-  cash: 'DINHEIRO',
+  pix: 'Pix',
+  card: 'Cartão',
+  cash: 'Dinheiro',
 };
 
-const DIVIDER = '--------------------------------';
+const WIDTH = 62;
+const DIVIDER = '-'.repeat(WIDTH);
 
-/** Mensagem no formato do cupom térmico. */
+/** Saudação conforme o horário: Bom Dia / Boa Tarde / Boa Noite. */
+function greeting(): string {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return 'Bom Dia !';
+  if (h >= 12 && h < 18) return 'Boa Tarde !';
+  return 'Boa Noite !';
+}
+
+function center(text: string): string {
+  const t = text.slice(0, WIDTH);
+  const left = Math.max(0, Math.floor((WIDTH - t.length) / 2));
+  return ' '.repeat(left) + t;
+}
+
+/** Preço no padrão do exemplo: R$ 08,00 (sempre 2 dígitos nos reais). */
+function pricePad(value: number): string {
+  const safe = Number.isFinite(value) && value >= 0 ? value : 0;
+  const reais = Math.floor(safe);
+  const cents = Math.round((safe - reais) * 100);
+  const reaisStr = reais < 10 ? `0${reais}` : `${reais}`;
+  return `R$ ${reaisStr},${String(cents).padStart(2, '0')}`;
+}
+
+/** Linha "etiqueta .... valor" alinhada à direita em 62 colunas. */
+function row(label: string, value: string): string {
+  const v = value.slice(0, WIDTH);
+  const cleanLabel = label.slice(0, WIDTH);
+  if (cleanLabel.length + 1 + v.length >= WIDTH) return `${cleanLabel} ${v}`;
+  return cleanLabel + ' '.repeat(WIDTH - cleanLabel.length - v.length) + v;
+}
+
+/** Mensagem no formato do cupom do WhatsApp. */
 export function generateWhatsAppMessage(
   items: CartItem[],
   checkout: CheckoutData,
   subtotal: number,
-  orderRef?: string,
+  _orderRef?: string,
 ): string {
   const c = checkout.customer;
   const lines: string[] = [];
-  const now = new Date();
-  const dateStr = `${now.toLocaleDateString('pt-BR')} ${now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
 
-  lines.push(PIZZERIA_NAME.toUpperCase());
-  lines.push('');
-  lines.push(PIZZERIA_SLOGAN);
-  lines.push('');
-  lines.push(`Pedido ${orderRef || 'S/REF'} · ${dateStr}`);
-  lines.push('');
   lines.push(DIVIDER);
+  lines.push(center(greeting()));
   lines.push('');
+  lines.push(center('Meu Pedido'));
+  lines.push(DIVIDER);
 
   items.slice(0, 100).forEach((item) => {
     const unit = getItemPrice(item);
-    lines.push(`${item.quantity}x ${sanitizeLine(item.product.name, 60).toUpperCase()}`);
-    lines.push('');
-    if (item.size) {
-      lines.push(`  ${sanitizeLine(item.size.name, 30)}`);
-      lines.push('');
+    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 20)})` : '';
+    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 40)}${sizeSuffix}`, pricePad(unit * item.quantity)));
+    if (item.crust && item.crust.price > 0) {
+      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 40)}`, pricePad(item.crust.price)));
     }
-    if (item.crust) {
-      lines.push(`  Borda: ${sanitizeLine(item.crust.name, 30)}`);
-      lines.push('');
-    }
-    if (item.extras.length) {
-      lines.push(`  + ${item.extras.map((e) => sanitizeLine(e.name, 30)).join(', ')}`);
-      lines.push('');
+    for (const extra of item.extras.slice(0, 10)) {
+      lines.push(row(`+ ${sanitizeLine(extra.name, 40)}`, pricePad(extra.price * item.quantity)));
     }
     if (item.observations) {
-      lines.push(`  Obs: ${sanitizeLine(item.observations, 200)}`);
-      lines.push('');
+      lines.push(`Obs: ${sanitizeLine(item.observations, 56)}`);
     }
-    lines.push(`${item.quantity} x ${formatBRL(unit)}`);
-    lines.push(formatBRL(unit * item.quantity));
-    lines.push('');
-    lines.push('');
   });
 
   const safeSubtotal = Number.isFinite(subtotal) && subtotal >= 0 ? subtotal : 0;
 
+  lines.push(row('Taxa De Entrega', DELIVERY_FEE_TEXT));
+  lines.push(row('Total', pricePad(safeSubtotal)));
   lines.push(DIVIDER);
-  lines.push('');
-  lines.push('SUBTOTAL');
-  lines.push(formatBRL(safeSubtotal));
-  lines.push('');
-  lines.push('ENTREGA');
-  lines.push(DELIVERY_FEE_TEXT);
-  lines.push('');
-  lines.push('TOTAL');
-  lines.push(formatBRL(safeSubtotal));
-  lines.push('');
-  lines.push(DIVIDER);
-  lines.push('');
-  lines.push('ENTREGA');
-  lines.push('');
-  lines.push(sanitizeLine(c.name, 80));
-  lines.push('');
-  if (c.cep) {
-    lines.push(`CEP: ${sanitizeLine(c.cep, 9)}`);
-    lines.push('');
-  }
-  lines.push(
-    sanitizeLine(
-      `${c.address}, ${c.number}${c.complement ? ` - ${c.complement}` : ''}`,
-      140,
-    ),
-  );
-  lines.push('');
-  lines.push(
-    sanitizeLine(
-      `${c.neighborhood}${c.reference ? ` (Ref: ${c.reference})` : ''}`,
-      140,
-    ),
-  );
-  lines.push('');
-  lines.push(`Tel: ${sanitizeLine(c.phone, 20)}`);
-  lines.push('');
-  lines.push(DIVIDER);
-  lines.push('');
-  lines.push('PAGAMENTO');
-  lines.push(PAYMENT_LABELS[checkout.payment] ?? 'PIX');
-  if (checkout.payment === 'pix') {
-    lines.push('Cliente paga via Pix — aguardar comprovante nesta conversa.');
-  }
+  lines.push(center(`Forma de Pagamento ${PAYMENT_LABELS[checkout.payment] ?? 'Pix'}`));
+
   if (checkout.payment === 'cash' && checkout.cashAmount) {
     const cash = parseBRLInput(checkout.cashAmount);
     if (Number.isFinite(cash) && cash > 0) {
+      lines.push(row('Troco para', formatBRL(cash)));
       const change = cash - safeSubtotal;
-      lines.push(
-        change > 0
-          ? `Troco para ${formatBRL(cash)} — levar ${formatBRL(change)}`
-          : `Pagamento em dinheiro: ${formatBRL(cash)}`,
-      );
+      if (change > 0) lines.push(row('Devolver', formatBRL(change)));
     }
   }
-  lines.push('');
+
   lines.push(DIVIDER);
-  lines.push('');
-  lines.push('OBRIGADO PELA PREFERENCIA!');
+  lines.push(`Cliente ${sanitizeLine(c.name, 53)}`);
+  lines.push(`Contato ${sanitizeLine(c.phone, 53)}`);
+  lines.push('Endereço');
+  const addressLine = [c.address, c.number ? `N${c.number}` : '', c.complement, c.neighborhood ? `Bairro ${c.neighborhood}` : '']
+    .filter(Boolean)
+    .join(' ');
+  lines.push(sanitizeLine(addressLine, WIDTH));
+  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 51)}`);
+  lines.push(DIVIDER);
 
   return lines.join('\n').slice(0, 4000);
 }
