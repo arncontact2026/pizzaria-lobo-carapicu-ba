@@ -14,7 +14,7 @@ interface ReceiptPreviewProps {
   paymentLabel: string;
 }
 
-const line = '--------------------------------';
+const line = '------------------------------------';
 
 /** Cupom em estilo papel térmico (80 mm) para conferência antes do envio. */
 export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, paymentLabel }: ReceiptPreviewProps) {
