@@ -14,8 +14,6 @@ interface ReceiptPreviewProps {
   paymentLabel: string;
 }
 
-const line = '------------------------------------';
-
 /** Cupom em estilo papel térmico (80 mm) para conferência antes do envio. */
 export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, paymentLabel }: ReceiptPreviewProps) {
   const now = new Date();
@@ -34,7 +32,7 @@ export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, pay
         <p className="text-center">
           Pedido {orderRef} · {dateStr}
         </p>
-        <p>{line}</p>
+        <div aria-hidden className="border-t border-dashed border-neutral-400 my-1.5" />
 
         {items.map((item, i) => {
           const unit = getItemPrice(item);
@@ -60,7 +58,7 @@ export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, pay
           );
         })}
 
-        <p>{line}</p>
+        <div aria-hidden className="border-t border-dashed border-neutral-400 my-1.5" />
         <p className="flex justify-between">
           <span>SUBTOTAL</span>
           <span>{formatBRL(subtotal)}</span>
@@ -73,7 +71,7 @@ export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, pay
           <span>TOTAL</span>
           <span>{formatBRL(total)}</span>
         </p>
-        <p>{line}</p>
+        <div aria-hidden className="border-t border-dashed border-neutral-400 my-1.5" />
 
         <p className="font-bold">ENTREGA</p>
         <p>{c.name}</p>
@@ -87,13 +85,13 @@ export function ReceiptPreview({ items, checkout, subtotal, total, orderRef, pay
           {c.reference ? ` (Ref: ${c.reference})` : ''}
         </p>
         <p>Tel: {c.phone}</p>
-        <p>{line}</p>
+        <div aria-hidden className="border-t border-dashed border-neutral-400 my-1.5" />
 
         <p className="flex justify-between">
           <span>PAGAMENTO</span>
           <span className="font-bold">{paymentLabel}</span>
         </p>
-        <p>{line}</p>
+        <div aria-hidden className="border-t border-dashed border-neutral-400 my-1.5" />
         <p className="text-center font-bold">OBRIGADO PELA PREFERENCIA!</p>
       </div>
     </section>
