@@ -101,7 +101,12 @@ export function generateWhatsAppMessage(
   if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 51)}`);
   lines.push(DIVIDER);
 
-  return lines.join('\n').slice(0, 4000);
+  // Bloco monoespaçado: no WhatsApp, só assim os valores alinham em coluna.
+  const body = lines
+    .join('\n')
+    .replace(/`/g, "'")
+    .slice(0, 3900);
+  return '```\n' + body + '\n```';
 }
 
 export function getWhatsAppUrl(message: string): string {
