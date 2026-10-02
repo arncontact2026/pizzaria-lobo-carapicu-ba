@@ -1,6 +1,6 @@
 // Service worker da Pizzaria Lobo: torna o site instalável como PWA
 // (ícone limpo, sem selo do navegador) e acelera visitas repetidas.
-const SW_VERSION = 'pizzaria-lobo-v4';
+const SW_VERSION = 'pizzaria-lobo-v5';
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const PAGES_CACHE = `${SW_VERSION}-pages`;
 
