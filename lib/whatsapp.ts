@@ -35,12 +35,9 @@ function pricePad(value: number): string {
   return `R$ ${reaisStr},${String(cents).padStart(2, '0')}`;
 }
 
-/** Linha "etiqueta .... valor" alinhada à direita, nunca passa da largura. */
+/** Linha "etiqueta - valor" (fonte proporcional: sem alinhamento por espaços). */
 function row(label: string, value: string): string {
-  const v = value.slice(0, WIDTH);
-  const maxLabel = Math.max(1, WIDTH - v.length - 1);
-  const cleanLabel = label.slice(0, maxLabel);
-  return cleanLabel + ' '.repeat(WIDTH - cleanLabel.length - v.length) + v;
+  return `${label.slice(0, 28)} - ${value}`.slice(0, WIDTH + 12);
 }
 
 /** Quebra linha longa em várias de até WIDTH caracteres (endereço). */
@@ -79,16 +76,16 @@ export function generateWhatsAppMessage(
 
   items.slice(0, 100).forEach((item) => {
     const unit = getItemPrice(item);
-    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 8)})` : '';
-    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 18)}${sizeSuffix}`, pricePad(unit * item.quantity)));
+    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 12)})` : '';
+    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 26)}${sizeSuffix}`, pricePad(unit * item.quantity)));
     if (item.crust && item.crust.price > 0) {
-      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 18)}`, pricePad(item.crust.price)));
+      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 26)}`, pricePad(item.crust.price)));
     }
     for (const extra of item.extras.slice(0, 10)) {
-      lines.push(row(`+ ${sanitizeLine(extra.name, 18)}`, pricePad(extra.price * item.quantity)));
+      lines.push(row(`+ ${sanitizeLine(extra.name, 26)}`, pricePad(extra.price * item.quantity)));
     }
     if (item.observations) {
-      lines.push(`Obs: ${sanitizeLine(item.observations, 24)}`);
+      lines.push(`Obs: ${sanitizeLine(item.observations, 60)}`);
     }
   });
 
@@ -109,22 +106,17 @@ export function generateWhatsAppMessage(
   }
 
   lines.push(DIVIDER);
-  lines.push(`Cliente ${sanitizeLine(c.name, 21)}`);
-  lines.push(`Contato ${sanitizeLine(c.phone, 21)}`);
+  lines.push(`Cliente ${sanitizeLine(c.name, 40)}`);
+  lines.push(`Contato ${sanitizeLine(c.phone, 40)}`);
   lines.push('Endereço');
   const addressLine = [c.address, c.number ? `N${c.number}` : '', c.complement, c.neighborhood ? `Bairro ${c.neighborhood}` : '']
     .filter(Boolean)
     .join(' ');
   for (const part of wrap(sanitizeLine(addressLine, 200))) lines.push(part);
-  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 19)}`);
+  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 40)}`);
   lines.push(DIVIDER);
 
-  // Bloco monoespaçado: no WhatsApp, só assim os valores alinham em coluna.
-  const body = lines
-    .join('\n')
-    .replace(/`/g, "'")
-    .slice(0, 3900);
-  return '```\n' + body + '\n```';
+  return lines.join('\n').replace(/`/g, "'").slice(0, 4000);
 }
 
 export function getWhatsAppUrl(message: string): string {
