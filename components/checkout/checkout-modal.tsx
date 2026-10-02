@@ -141,7 +141,7 @@ export function CheckoutModal() {
   return (
     <AnimatePresence>
       {isCheckoutOpen && (
-        <ModalShell label="Finalizar pedido" variant="sheet" onClose={handleClose}>
+        <ModalShell key="checkout-modal" label="Finalizar pedido" variant="sheet" onClose={handleClose}>
             {submitted ? (
               <div className="p-8 text-center">
                 <motion.div

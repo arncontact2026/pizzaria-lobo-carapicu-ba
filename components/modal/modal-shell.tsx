@@ -13,6 +13,9 @@ interface ModalShellProps {
 }
 
 const PANEL_SPRING = { type: 'spring', damping: 28, stiffness: 300 } as const;
+// Saídas rápidas e determinísticas: overlay invisível nunca prende toques.
+const OVERLAY_FADE = { duration: 0.15 } as const;
+const DRAWER_EXIT = { duration: 0.22, ease: 'easeOut' } as const;
 
 /**
  * Estrutura compartilhada dos modais: overlay, tecla ESC,
@@ -38,7 +41,7 @@ export function ModalShell({ label, onClose, variant = 'sheet', children }: Moda
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        transition={{ duration: 0.18 }}
+        transition={OVERLAY_FADE}
         className="fixed inset-0 z-50 bg-black/60"
         onClick={onClose}
         role="dialog"
@@ -49,7 +52,7 @@ export function ModalShell({ label, onClose, variant = 'sheet', children }: Moda
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
-          transition={PANEL_SPRING}
+          transition={DRAWER_EXIT}
           className="absolute right-0 top-0 bottom-0 w-full sm:max-w-md bg-card shadow-2xl flex flex-col"
           onClick={(e) => e.stopPropagation()}
         >
@@ -64,7 +67,7 @@ export function ModalShell({ label, onClose, variant = 'sheet', children }: Moda
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.18 }}
+      transition={OVERLAY_FADE}
       className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center"
       onClick={onClose}
       role="dialog"

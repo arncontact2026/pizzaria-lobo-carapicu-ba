@@ -43,7 +43,7 @@ export function CartDrawer() {
   return (
     <AnimatePresence>
       {isCartOpen && (
-        <ModalShell label="Sacola de pedidos" variant="drawer" onClose={closeCart}>
+        <ModalShell key="cart-drawer" label="Sacola de pedidos" variant="drawer" onClose={closeCart}>
             {/* Header */}
             <div className="flex items-center justify-between p-4 sm:p-5 border-b">
               <div className="flex items-center gap-2">
@@ -172,17 +172,15 @@ export function CartDrawer() {
                 <CupSoda className="w-5 h-5 text-primary flex-shrink-0" aria-hidden />
                 <button
                   type="button"
-                    onClick={() => {
-                      setCartOpen(false);
-                      // Fecha a sacola primeiro (animação de saída + libera o
-                      // scroll) e só depois navega: evita tela presa no celular.
-                      window.setTimeout(() => {
-                        forceUnlockScroll();
-                        window.dispatchEvent(
-                          new CustomEvent('lobo:show-category', { detail: 'bebidas' }),
-                        );
-                      }, 350);
-                    }}
+                  onClick={() => {
+                    // Fecha a sacola e navega no mesmo gesto: sem timers que
+                    // possam dessincronizar a saída do overlay.
+                    setCartOpen(false);
+                    forceUnlockScroll();
+                    window.dispatchEvent(
+                      new CustomEvent('lobo:show-category', { detail: 'bebidas' }),
+                    );
+                  }}
                   className="flex-1 text-left"
                 >
                   <span className="block text-sm font-bold leading-snug">

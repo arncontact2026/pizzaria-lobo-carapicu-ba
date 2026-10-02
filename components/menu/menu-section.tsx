@@ -56,10 +56,13 @@ export function MenuSection() {
       forceUnlockScroll();
       setActiveCategory(slug);
       setSearch('');
-      // Rola depois da troca da grade, de uma vez, sem animação competindo.
+      // Rola após a pintura da nova grade (dois quadros), sem timer solto.
       requestAnimationFrame(() => {
-        forceUnlockScroll();
-        document.getElementById('cardapio')?.scrollIntoView({ behavior: 'auto', block: 'start' });
+        requestAnimationFrame(() => {
+          if (!document.getElementById('cardapio')) return;
+          forceUnlockScroll();
+          document.getElementById('cardapio')?.scrollIntoView({ behavior: 'auto', block: 'start' });
+        });
       });
     };
     window.addEventListener('lobo:show-category', handler);
