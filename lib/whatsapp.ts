@@ -1,5 +1,5 @@
 import { CartItem, CheckoutData } from './types';
-import { WHATSAPP_NUMBER, DELIVERY_FEE_TEXT } from './data';
+import { WHATSAPP_NUMBER } from './data';
 import { getItemPrice } from './cart-context';
 import { formatBRL, parseBRLInput, sanitizeLine } from './format';
 
@@ -9,7 +9,7 @@ const PAYMENT_LABELS: Record<CheckoutData['payment'], string> = {
   cash: 'Dinheiro',
 };
 
-const WIDTH = 62;
+const WIDTH = 40;
 const DIVIDER = '-'.repeat(WIDTH);
 
 /** Saudação conforme o horário: Bom Dia / Boa Tarde / Boa Noite. */
@@ -35,12 +35,30 @@ function pricePad(value: number): string {
   return `R$ ${reaisStr},${String(cents).padStart(2, '0')}`;
 }
 
-/** Linha "etiqueta .... valor" alinhada à direita em 62 colunas. */
+/** Linha "etiqueta .... valor" alinhada à direita, nunca passa da largura. */
 function row(label: string, value: string): string {
   const v = value.slice(0, WIDTH);
-  const cleanLabel = label.slice(0, WIDTH);
-  if (cleanLabel.length + 1 + v.length >= WIDTH) return `${cleanLabel} ${v}`;
+  const maxLabel = Math.max(1, WIDTH - v.length - 1);
+  const cleanLabel = label.slice(0, maxLabel);
   return cleanLabel + ' '.repeat(WIDTH - cleanLabel.length - v.length) + v;
+}
+
+/** Quebra linha longa em várias de até WIDTH caracteres (endereço). */
+function wrap(text: string): string[] {
+  const words = text.split(' ').filter(Boolean);
+  const out: string[] = [];
+  let current = '';
+  for (const w of words) {
+    const next = current ? `${current} ${w}` : w;
+    if (next.length <= WIDTH) {
+      current = next;
+    } else {
+      if (current) out.push(current);
+      current = w.length > WIDTH ? w.slice(0, WIDTH) : w;
+    }
+  }
+  if (current) out.push(current);
+  return out.length ? out : [''];
 }
 
 /** Mensagem no formato do cupom do WhatsApp. */
@@ -61,22 +79,22 @@ export function generateWhatsAppMessage(
 
   items.slice(0, 100).forEach((item) => {
     const unit = getItemPrice(item);
-    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 20)})` : '';
-    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 40)}${sizeSuffix}`, pricePad(unit * item.quantity)));
+    const sizeSuffix = item.size ? ` (${sanitizeLine(item.size.name, 12)})` : '';
+    lines.push(row(`${item.quantity}x ${sanitizeLine(item.product.name, 24)}${sizeSuffix}`, pricePad(unit * item.quantity)));
     if (item.crust && item.crust.price > 0) {
-      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 40)}`, pricePad(item.crust.price)));
+      lines.push(row(`Borda ${sanitizeLine(item.crust.name, 24)}`, pricePad(item.crust.price)));
     }
     for (const extra of item.extras.slice(0, 10)) {
-      lines.push(row(`+ ${sanitizeLine(extra.name, 40)}`, pricePad(extra.price * item.quantity)));
+      lines.push(row(`+ ${sanitizeLine(extra.name, 24)}`, pricePad(extra.price * item.quantity)));
     }
     if (item.observations) {
-      lines.push(`Obs: ${sanitizeLine(item.observations, 56)}`);
+      lines.push(`Obs: ${sanitizeLine(item.observations, 34)}`);
     }
   });
 
   const safeSubtotal = Number.isFinite(subtotal) && subtotal >= 0 ? subtotal : 0;
 
-  lines.push(row('Taxa De Entrega', DELIVERY_FEE_TEXT));
+  lines.push(row('Taxa De Entrega', 'Consultar taxa'));
   lines.push(row('Total', pricePad(safeSubtotal)));
   lines.push(DIVIDER);
   lines.push(center(`Forma de Pagamento ${PAYMENT_LABELS[checkout.payment] ?? 'Pix'}`));
@@ -91,14 +109,14 @@ export function generateWhatsAppMessage(
   }
 
   lines.push(DIVIDER);
-  lines.push(`Cliente ${sanitizeLine(c.name, 53)}`);
-  lines.push(`Contato ${sanitizeLine(c.phone, 53)}`);
+  lines.push(`Cliente ${sanitizeLine(c.name, 31)}`);
+  lines.push(`Contato ${sanitizeLine(c.phone, 31)}`);
   lines.push('Endereço');
   const addressLine = [c.address, c.number ? `N${c.number}` : '', c.complement, c.neighborhood ? `Bairro ${c.neighborhood}` : '']
     .filter(Boolean)
     .join(' ');
-  lines.push(sanitizeLine(addressLine, WIDTH));
-  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 51)}`);
+  for (const part of wrap(sanitizeLine(addressLine, 200))) lines.push(part);
+  if (c.reference) lines.push(`Referencia ${sanitizeLine(c.reference, 29)}`);
   lines.push(DIVIDER);
 
   // Bloco monoespaçado: no WhatsApp, só assim os valores alinham em coluna.
